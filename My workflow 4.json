@@ -1,0 +1,297 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -144
+      ],
+      "id": "d17701c7-4dc7-4182-a10c-94111dec8284",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1AkhYysMsZ8jBp8rip7EwpgKnDehC8HJ-",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -192,
+        -144
+      ],
+      "id": "696ee0e8-dbbb-4e9b-88ef-dd18077afd72",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "gvY8tOsCWEQJi9Pq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -128
+      ],
+      "id": "3fb99921-361d-44ff-8102-cf7c23457112",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cafd8751-6186-449b-8cca-17e38b8dfe98",
+              "name": "=name",
+              "value": "={{ $json.name.trim().toLowerCase().replace(/\\b\\w/g, c => c.toUpperCase()) }}",
+              "type": "string"
+            },
+            {
+              "id": "cb206f0e-1de6-4d71-b86f-cb0f2e7d527b",
+              "name": "=email",
+              "value": "={{ ($json.email || '').trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "f79ffa1e-56a8-41eb-b910-a4cb0519f145",
+              "name": "=course",
+              "value": "={{ $json.course.trim().toLowerCase().replace(/\\b\\w/g, c => c.toUpperCase()) }}",
+              "type": "string"
+            },
+            {
+              "id": "2705a1b0-23bf-47b5-866d-919a83d0d0f5",
+              "name": "=status",
+              "value": "={{ $json.status.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "9969d6d5-20e1-4307-a849-9d1067ffc785",
+              "name": "=enrolled_date",
+              "value": "={{ $json.enrolled_date.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        -128
+      ],
+      "id": "77ee1260-0d2a-4f6f-b538-e95667ac5180",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "41a28f6d-44d4-4314-a444-b0bc6685e19b",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "status is equal to active",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "143f68d5-4992-4b88-a443-059e6c894138",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "active",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        -128
+      ],
+      "id": "208c7879-a512-4887-a0b2-456bb910471e",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "email",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -128
+      ],
+      "id": "69b0c660-95de-49bb-acc8-3c0585536b52",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        -128
+      ],
+      "id": "d77a1944-a12a-4131-8abe-245ed6839f7c",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "students_clean.csv",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        -128
+      ],
+      "id": "ce1678a2-66b0-47bd-961d-51ddfd9cdbc4",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "gvY8tOsCWEQJi9Pq",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "eaa922de-ac9e-4968-8e1f-8491471cfb60",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9cc196a42830722016fbef165fd795f4e8b7e9bc40f9788abed968a5febe7e70"
+  },
+  "nodeGroups": [],
+  "id": "HzforvWmXCqBVERt",
+  "tags": []
+}
